@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin - Gerenciar Portfólio</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 2rem; }
+    label, input, textarea, select, button { display: block; width: 100%; margin-bottom: 1rem; }
+    .preview { max-width: 200px; margin-bottom: 1rem; }
+  </style>
+</head>
+<body>
+  <h1>Painel de Administração</h1>
+  <a href="portfolio.html">Portfólio</a>
+
+  <form id="projectForm">
+    <label for="title">Título do Projeto:</label>
+    <input type="text" id="title" required />
+
+    <label for="description">Descrição:</label>
+    <textarea id="description" rows="4" required></textarea>
+
+    <label for="category">Categoria:</label>
+    <select id="category" required>
+      <option value="residential">Residencial</option>
+      <option value="infrastructure">Reabilitação</option>
+      <option value="commercial">Design Interior</option>
+    </select>
+
+    <label for="image">Imagem do Projeto:</label>
+    <input type="file" id="image" accept="image/*" required />
+
+    <img id="imagePreview" class="preview" src="" alt="Pré-visualização" />
+
+    <button type="submit">Adicionar Projeto</button>
+  </form>
+
+  <script>
+    const form = document.getElementById('projectForm');
+    const imageInput = document.getElementById('image');
+    const imagePreview = document.getElementById('imagePreview');
+
+    let previewData = '';
+
+    imageInput.addEventListener('change', function() {
+      const file = imageInput.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          previewData = e.target.result;
+          imagePreview.src = previewData;
+        }
+        reader.readAsDataURL(file);
+      }
+    });
+
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      const title = document.getElementById('title').value;
+      const description = document.getElementById('description').value;
+      const category = document.getElementById('category').value;
+
+      const newProject = {
+        title,
+        description,
+        category,
+        image: previewData
+      };
+
+      const projects = JSON.parse(localStorage.getItem('portfolioProjects') || '[]');
+      projects.push(newProject);
+      localStorage.setItem('portfolioProjects', JSON.stringify(projects));
+
+      alert("Projeto adicionado com sucesso!");
+      form.reset();
+      imagePreview.src = "";
+    });
+  </script>
+</body>
+</html>
